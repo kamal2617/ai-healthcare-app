@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Diagnostic System</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Healthcare Diagnostic</h1>
+        <form id="diagnosisForm">
+            <label><input type="checkbox" name="symptoms" value="fever"> Fever</label>
+            <label><input type="checkbox" name="symptoms" value="cough"> Cough</label>
+            <label><input type="checkbox" name="symptoms" value="fatigue"> Fatigue</label>
+            <label><input type="checkbox" name="symptoms" value="headache"> Headache</label>
+            <label><input type="checkbox" name="symptoms" value="nausea"> Nausea</label>
+            <label><input type="checkbox" name="symptoms" value="sore-throat"> Sore Throat</label>
+            <label><input type="checkbox" name="symptoms" value="shortness-breath"> Shortness of Breath</label>
+            <button type="submit">Get Diagnosis</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    
+    <script>
+        document.getElementById("diagnosisForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const checked = Array.from(document.querySelectorAll('input[name="symptoms"]:checked')).map(el => el.value);
+            const res = await fetch('/diagnose', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ symptoms: checked })
+            });
+            const data = await res.json();
+            document.getElementById('result').innerHTML = `<h3>${data.diagnosis}</h3><ul>${data.treatments.map(t => `<li>${t}</li>`).join('')}</ul>`;
+        });
+    </script>
+</body>
+</html>
